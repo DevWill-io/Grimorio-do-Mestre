@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Grimório do Mestre — rolador de dados, fichas de personagem para D&D 5e e Tormenta 20 e ferramentas para mestres de RPG de mesa.">
+  <meta name="color-scheme" content="dark">
+  <title>Grimório do Mestre — Ferramentas de RPG de Mesa</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Aviso exibido quando o localStorage não está disponível -->
+  <div class="banner" id="storageBanner" role="alert" hidden>
+    ⚠️ O armazenamento local está indisponível neste navegador — nada será salvo entre sessões.
+  </div>
+
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-icon" aria-hidden="true">🎲</span>
+      <div class="brand-text">
+        <h1>Grimório do Mestre</h1>
+        <p class="brand-sub">Ferramentas para D&amp;D 5e &amp; Tormenta 20</p>
+      </div>
+    </div>
+
+    <nav class="tabs" role="tablist" aria-label="Navegação principal">
+      <button class="tab is-active" id="tab-dice" role="tab" type="button"
+              aria-selected="true" aria-controls="panel-dice" data-tab="dice">
+        <span aria-hidden="true">🎲</span> Dados
+      </button>
+      <button class="tab" id="tab-sheets" role="tab" type="button"
+              aria-selected="false" aria-controls="panel-sheets" data-tab="sheets" tabindex="-1">
+        <span aria-hidden="true">📜</span> Fichas
+      </button>
+      <button class="tab" id="tab-gm" role="tab" type="button"
+              aria-selected="false" aria-controls="panel-gm" data-tab="gm" tabindex="-1">
+        <span aria-hidden="true">⚔️</span> Mestre
+      </button>
+    </nav>
+  </header>
+
+  <main class="app-main">
+
+    <!-- ============================================================
+         PAINEL 1 — ROLADOR DE DADOS
+         ============================================================ -->
+    <section class="panel is-active" id="panel-dice" role="tabpanel" aria-labelledby="tab-dice">
+      <div class="dice-layout">
+
+        <article class="card glass">
+          <h2 class="card-title"><span aria-hidden="true">🎲</span> Rolagem rápida</h2>
+
+          <div class="dice-quick" id="quickDice">
+            <button type="button" class="die-btn" data-die="4">d4</button>
+            <button type="button" class="die-btn" data-die="6">d6</button>
+            <button type="button" class="die-btn" data-die="8">d8</button>
+            <button type="button" class="die-btn" data-die="10">d10</button>
+            <button type="button" class="die-btn" data-die="12">d12</button>
+            <button type="button" class="die-btn die-btn--main" data-die="20">d20</button>
+            <button type="button" class="die-btn" data-die="100">d100</button>
+          </div>
+
+          <form class="formula-form" id="formulaForm" novalidate>
+            <div class="field">
+              <label for="formulaInput">Fórmula personalizada</label>
+              <p class="hint" id="formulaHint">
+                Aceita dados e modificadores: <code>2d6+3</code>, <code>1d20+5</code>, <code>4d8-2</code>, <code>1d20+1d6+2</code>
+              </p>
+            </div>
+            <div class="input-row">
+              <input type="text" id="formulaInput" name="formula" autocomplete="off"
+                     spellcheck="false" placeholder="Ex.: 2d6+3" aria-describedby="formulaHint formulaError">
+              <button type="submit" class="btn primary" id="btnRoll">Rolar</button>
+            </div>
+            <p class="error-msg" id="formulaError" role="alert" hidden></p>
+          </form>
+
+          <div class="dice-result" id="diceResult" aria-live="polite">
+            <p class="result-placeholder">Aguardando uma rolagem…</p>
+          </div>
+        </article>
+
+        <article class="card glass">
+          <div class="card-head">
+            <h2 class="card-title"><span aria-hidden="true">📜</span> Histórico</h2>
+            <button type="button" class="btn ghost small" id="btnClearHistory">Limpar</button>
+          </div>
+          <ul class="history-list" id="historyList"></ul>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         PAINEL 2 — FICHAS DE PERSONAGEM
+         ============================================================ -->
+    <section class="panel" id="panel-sheets" role="tabpanel" aria-labelledby="tab-sheets" hidden>
+
+      <div class="card glass sheet-toolbar">
+        <div class="field">
+          <label for="systemSelect">Sistema de jogo</label>
+          <select id="systemSelect">
+            <option value="dnd5e">Dungeons &amp; Dragons 5e</option>
+            <option value="t20">Tormenta 20</option>
+          </select>
+        </div>
+        <div class="toolbar-actions">
+          <button type="button" class="btn ghost" id="btnNewSheet">✦ Nova Ficha</button>
+          <button type="button" class="btn ghost" id="btnLoadSheet">↺ Carregar Ficha</button>
+          <button type="button" class="btn primary" id="btnSaveSheet">💾 Salvar Ficha</button>
+        </div>
+      </div>
+
+      <div class="sheet-layout">
+
+        <article class="card glass">
+          <h2 class="card-title"><span aria-hidden="true">🛡️</span> Identidade</h2>
+
+          <div class="field-grid">
+            <div class="field span-2">
+              <label for="charName">Nome do personagem</label>
+              <input type="text" id="charName" maxlength="60" placeholder="Ex.: Lyra Chama-Pálida">
+            </div>
+            <div class="field">
+              <label for="charRace">Raça</label>
+              <input type="text" id="charRace" maxlength="40" placeholder="Ex.: Elfo">
+            </div>
+            <div class="field">
+              <label for="charClass">Classe</label>
+              <input type="text" id="charClass" maxlength="40" placeholder="Ex.: Arcanista">
+            </div>
+            <div class="field">
+              <label for="charLevel">Nível</label>
+              <input type="number" id="charLevel" min="1" max="20" value="1">
+            </div>
+          </div>
+
+          <h3 class="sub-title">Atributos</h3>
+          <div class="attrs" id="attrsGrid"></div>
+        </article>
+
+        <article class="card glass" id="systemPanel"></article>
+
+        <article class="card glass">
+          <h2 class="card-title"><span aria-hidden="true">⚔️</span> Ataques</h2>
+
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th scope="col">Nome</th>
+                  <th scope="col">Dano</th>
+                  <th scope="col">Bônus</th>
+                  <th scope="col"><span class="sr-only">Ações</span></th>
+                </tr>
+              </thead>
+              <tbody id="attackBody"></tbody>
+            </table>
+          </div>
+          <button type="button" class="btn ghost small" id="btnAddAttack">+ Adicionar arma</button>
+
+          <h2 class="card-title mt"><span aria-hidden="true">🎒</span> Equipamentos</h2>
+          <div class="field">
+            <label class="sr-only" for="charInventory">Equipamentos e itens</label>
+            <textarea id="charInventory" rows="6" placeholder="Mochila, corda de 15m, 3 tochas, poção de cura…"></textarea>
+          </div>
+        </article>
+
+        <article class="card glass">
+          <h2 class="card-title"><span aria-hidden="true">📚</span> Fichas salvas</h2>
+          <p class="hint">Clique em uma ficha para selecioná-la e use <strong>Carregar Ficha</strong> na barra superior.</p>
+          <ul class="saved-list" id="savedSheets"></ul>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         PAINEL 3 — FERRAMENTAS DO MESTRE
+         ============================================================ -->
+    <section class="panel" id="panel-gm" role="tabpanel" aria-labelledby="tab-gm" hidden>
+      <div class="gm-layout">
+
+        <article class="card glass">
+          <h2 class="card-title"><span aria-hidden="true">⚔️</span> Rastreador de Iniciativa</h2>
+
+          <form class="inline-form" id="initForm">
+            <div class="field">
+              <label for="initName">Combatente</label>
+              <input type="text" id="initName" maxlength="40" placeholder="Ex.: Goblin arqueiro" required>
+            </div>
+            <div class="field field-sm">
+              <label for="initValue">Iniciativa</label>
+              <input type="number" id="initValue" value="10" required>
+            </div>
+            <button type="submit" class="btn primary">Adicionar</button>
+          </form>
+
+          <div class="toolbar-actions mt">
+            <button type="button" class="btn ghost small" id="btnSortInit">↕ Ordenar</button>
+            <button type="button" class="btn ghost small" id="btnNextTurn">⏭ Próximo turno</button>
+            <button type="button" class="btn danger small" id="btnClearInit">🗑 Limpar</button>
+          </div>
+
+          <ol class="init-list" id="initList"></ol>
+        </article>
+
+        <article class="card glass">
+          <h2 class="card-title"><span aria-hidden="true">🧙</span> Gerador de NPC</h2>
+
+          <div class="npc-card" id="npcCard">
+            <p class="npc-label">Nome</p>
+            <p class="npc-name" id="npcName">—</p>
+            <p class="npc-label">Traço de personalidade</p>
+            <p class="npc-trait" id="npcTrait">—</p>
+          </div>
+
+          <button type="button" class="btn primary block" id="btnNpc">🎲 Gerar novamente</button>
+        </article>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal de confirmação (ações destrutivas) -->
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <div class="modal glass" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalMessage">
+      <h2 class="modal-title" id="modalTitle">Confirmar ação</h2>
+      <p class="modal-message" id="modalMessage"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" id="modalCancel">Cancelar</button>
+        <button type="button" class="btn danger" id="modalConfirm">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notificações rápidas -->
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
